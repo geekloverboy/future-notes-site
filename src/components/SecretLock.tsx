@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import KittyPattern from "@/components/KittyPattern";
 
-const PIN_LENGTH = 6;
+const DEFAULT_PIN_LENGTH = 5; // Updated for "Karan"
 
 const SecretLock = () => {
   const [open, setOpen] = useState(false);
@@ -90,8 +90,8 @@ const SecretLock = () => {
     }
   };
 
-  // Render PIN dots
-  const dots = Array.from({ length: PIN_LENGTH }).map((_, i) => {
+  // Render dots (dynamic)
+  const dots = Array.from({ length: Math.max(DEFAULT_PIN_LENGTH, password.length) }).map((_, i) => {
     const filled = i < password.length;
     const isCurrent = i === password.length - 1 && filled;
 
@@ -130,9 +130,9 @@ const SecretLock = () => {
     );
   });
 
-  // Handle auto-submit
+  // Handle auto-submit (optional, but keep for UX if it's 5 digits)
   useEffect(() => {
-    if (password.length === PIN_LENGTH && !loading && !revealed) {
+    if (password.length === DEFAULT_PIN_LENGTH && !loading && !revealed) {
       submit();
     }
   }, [password, loading, revealed]);
@@ -272,7 +272,7 @@ const SecretLock = () => {
                             Secret Message
                           </h2>
                           <p className="text-[13px] text-pink-600/70 font-medium leading-relaxed">
-                            Enter the 6-digit PIN to reveal<br/>your hidden note 🎀
+                            Enter the secret word to reveal<br/>your hidden note 🎀
                           </p>
                         </div>
 
