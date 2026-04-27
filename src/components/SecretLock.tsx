@@ -90,6 +90,27 @@ const SecretLock = () => {
     }
   };
 
+  // Helper for dot styles to reduce complexity
+  const getDotStyle = (index: number) => {
+    const filled = index < password.length;
+    const isCurrent = index === password.length - 1 && filled;
+    
+    let backgroundColor = "hsl(350 60% 88%)";
+    if (error) {
+      backgroundColor = "hsl(0 80% 65%)";
+    } else if (filled) {
+      backgroundColor = "hsl(335 80% 60%)";
+    }
+
+    return {
+      scale: isCurrent ? [1, 1.4, 1] : filled ? 1 : 0.7,
+      backgroundColor,
+      boxShadow: isCurrent 
+        ? "0 0 12px hsla(335, 80%, 60%, 0.6)" 
+        : "none"
+    };
+  };
+
   // Render dots (dynamic)
   const dots = Array.from({ length: Math.max(DEFAULT_PIN_LENGTH, password.length) }).map((_, i) => {
     const filled = i < password.length;
@@ -97,19 +118,9 @@ const SecretLock = () => {
 
     return (
       <motion.div
-        key={i}
+        key={`dot-${i}`}
         className="rounded-full relative"
-        animate={{
-          scale: isCurrent ? [1, 1.4, 1] : filled ? 1 : 0.7,
-          backgroundColor: error
-            ? "hsl(0 80% 65%)"
-            : filled
-              ? "hsl(335 80% 60%)"
-              : "hsl(350 60% 88%)",
-          boxShadow: isCurrent 
-            ? "0 0 12px hsla(335, 80%, 60%, 0.6)" 
-            : "none"
-        }}
+        animate={getDotStyle(i)}
         transition={{ 
           type: "spring", 
           stiffness: 400, 
@@ -256,88 +267,7 @@ const SecretLock = () => {
 
                 <div className="relative z-10">
                   <AnimatePresence mode="wait">
-                    {!revealed ? (
-                      <motion.div
-                        key="lock-stage"
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
-                        transition={{ duration: 0.25 }}
-                      >
-                        <div className="text-center mb-6">
-                          <h2 
-                            className="text-2xl font-extrabold mb-1.5"
-                            style={{ color: "hsl(335 80% 45%)", fontFamily: "'Quicksand', sans-serif" }}
-                          >
-                            Secret Message
-                          </h2>
-                          <p className="text-[13px] text-pink-600/70 font-medium leading-relaxed">
-                            Enter the secret word to reveal<br/>your hidden note 🎀
-                          </p>
-                        </div>
-
-                        {/* PIN dots indicator */}
-                        <div className="flex items-center justify-center gap-2.5 mb-4 h-3">
-                          {dots}
-                        </div>
-
-                        <form onSubmit={submit} className="space-y-4">
-                          <input
-                            ref={inputRef}
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value.slice(0, 32))}
-                            className={`w-full text-center text-lg tracking-[0.4em] py-3.5 outline-none transition-all duration-500 font-semibold ${error ? "animate-shake" : ""}`}
-                            style={{
-                              background: "rgba(255, 255, 255, 0.6)",
-                              backdropFilter: "blur(4px)",
-                              border: `1.5px solid ${error ? "hsl(0 80% 70%)" : "hsl(350 80% 92%)"}`,
-                              borderRadius: 16,
-                              color: "hsl(335 80% 45%)",
-                              boxShadow: "inset 0 2px 8px hsla(335, 20%, 30%, 0.05)",
-                            }}
-                            placeholder="••••••"
-                            autoComplete="off"
-                            onFocus={(e) => {
-                              if (error) return;
-                              e.currentTarget.style.borderColor = "hsl(335 80% 70%)";
-                              e.currentTarget.style.boxShadow = "0 0 0 4px hsla(340, 100%, 80%, 0.25), inset 0 2px 8px hsla(335, 20%, 30%, 0.05)";
-                            }}
-                            onBlur={(e) => {
-                              e.currentTarget.style.borderColor = "hsl(350 80% 92%)";
-                              e.currentTarget.style.boxShadow = "inset 0 2px 8px hsla(335, 20%, 30%, 0.05)";
-                            }}
-                          />
-                          <AnimatePresence>
-                            {error && (
-                              <motion.p
-                                initial={{ opacity: 0, y: -4 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0 }}
-                                className="text-center text-destructive text-sm font-semibold"
-                              >
-                                💔
-                              </motion.p>
-                            )}
-                          </AnimatePresence>
-                          <button
-                            type="submit"
-                            disabled={loading || !password.trim()}
-                            className="candy-button w-full py-3.5 rounded-full text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                          >
-                            {loading ? (
-                              <motion.div
-                                className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
-                              />
-                            ) : (
-                              <Sparkles size={20} />
-                            )}
-                          </button>
-                        </form>
-                      </motion.div>
-                    ) : (
+                    {revealed ? (
                       <motion.div
                         key="reveal-stage"
                         initial={{ opacity: 0, y: 12 }}
@@ -421,32 +351,121 @@ const SecretLock = () => {
 
                         {/* Floating sparkle confetti */}
                         <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                          {[...Array(8)].map((_, i) => (
-                            <motion.span
-                              key={i}
-                              className="absolute text-base"
-                              style={{
-                                left: `${10 + i * 11}%`,
-                                top: "60%",
-                              }}
-                              initial={{ y: 0, opacity: 0, scale: 0.4 }}
-                              animate={{
-                                y: [-10, -90 - i * 8],
-                                opacity: [0, 1, 0],
-                                scale: [0.4, 1, 0.6],
-                                rotate: [0, 180],
-                              }}
-                              transition={{
-                                duration: 2.4,
-                                delay: 0.4 + i * 0.08,
-                                repeat: Infinity,
-                                repeatDelay: 1.6,
-                              }}
-                            >
-                              {i % 3 === 0 ? "✨" : i % 3 === 1 ? "💕" : "🎀"}
-                            </motion.span>
-                          ))}
+                          {new Array(8).fill(null).map((_, i) => {
+                            const getEmoji = () => {
+                              if (i % 3 === 0) return "✨";
+                              if (i % 3 === 1) return "💕";
+                              return "🎀";
+                            };
+                            
+                            return (
+                              <motion.span
+                                key={`confetti-${i}`}
+                                className="absolute text-base"
+                                style={{
+                                  left: `${10 + i * 11}%`,
+                                  top: "60%",
+                                }}
+                                initial={{ y: 0, opacity: 0, scale: 0.4 }}
+                                animate={{
+                                  y: [-10, -90 - i * 8],
+                                  opacity: [0, 1, 0],
+                                  scale: [0.4, 1, 0.6],
+                                  rotate: [0, 180],
+                                }}
+                                transition={{
+                                  duration: 2.4,
+                                  delay: 0.4 + i * 0.08,
+                                  repeat: Infinity,
+                                  repeatDelay: 1.6,
+                                }}
+                              >
+                                {getEmoji()}
+                              </motion.span>
+                            );
+                          })}
                         </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="lock-stage"
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.25 }}
+                      >
+                        <div className="text-center mb-6">
+                          <h2 
+                            className="text-2xl font-extrabold mb-1.5"
+                            style={{ color: "hsl(335 80% 45%)", fontFamily: "'Quicksand', sans-serif" }}
+                          >
+                            Secret Message
+                          </h2>
+                          <p className="text-[13px] text-pink-600/70 font-medium leading-relaxed">
+                            Enter the secret word to reveal<br/>your hidden note 🎀
+                          </p>
+                        </div>
+
+                        {/* PIN dots indicator */}
+                        <div className="flex items-center justify-center gap-2.5 mb-4 h-3">
+                          {dots}
+                        </div>
+
+                        <form onSubmit={submit} className="space-y-4">
+                          <input
+                            ref={inputRef}
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value.slice(0, 32))}
+                            className={`w-full text-center text-lg tracking-[0.4em] py-3.5 outline-none transition-all duration-500 font-semibold ${error ? "animate-shake" : ""}`}
+                            style={{
+                              background: "rgba(255, 255, 255, 0.6)",
+                              backdropFilter: "blur(4px)",
+                              border: `1.5px solid ${error ? "hsl(0 80% 70%)" : "hsl(350 80% 92%)"}`,
+                              borderRadius: 16,
+                              color: "hsl(335 80% 45%)",
+                              boxShadow: "inset 0 2px 8px hsla(335, 20%, 30%, 0.05)",
+                            }}
+                            placeholder="••••••"
+                            autoComplete="off"
+                            onFocus={(e) => {
+                              if (error) return;
+                              e.currentTarget.style.borderColor = "hsl(335 80% 70%)";
+                              e.currentTarget.style.boxShadow = "0 0 0 4px hsla(340, 100%, 80%, 0.25), inset 0 2px 8px hsla(335, 20%, 30%, 0.05)";
+                            }}
+                            onBlur={(e) => {
+                              e.currentTarget.style.borderColor = "hsl(350 80% 92%)";
+                              e.currentTarget.style.boxShadow = "inset 0 2px 8px hsla(335, 20%, 30%, 0.05)";
+                            }}
+                          />
+                          <AnimatePresence>
+                            {error && (
+                              <motion.p
+                                initial={{ opacity: 0, y: -4 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0 }}
+                                className="text-center text-destructive text-sm font-semibold"
+                              >
+                                💔
+                              </motion.p>
+                            )}
+                          </AnimatePresence>
+                          <button
+                            type="submit"
+                            disabled={loading || !password.trim()}
+                            className="candy-button w-full py-3.5 rounded-full text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          >
+                            {loading ? (
+                              <motion.div
+                                className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
+                                animate={{ rotate: 360 }}
+                                transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                              />
+                            ) : (
+                              <Sparkles size={20} />
+                            )}
+                          </button>
+                        </form>
                       </motion.div>
                     )}
                   </AnimatePresence>
