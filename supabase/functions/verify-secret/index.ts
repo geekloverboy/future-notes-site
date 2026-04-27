@@ -1,4 +1,4 @@
-// Verify the secret password using bcrypt
+// Verify the secret password using bcrypt with plain-text fallback
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import bcrypt from "https://esm.sh/bcryptjs@2.4.3";
 
@@ -12,8 +12,8 @@ Deno.serve(async (req: Request) => {
 
   try {
     const { password } = await req.json();
-    if (typeof password !== "string" || password.length < 1 || password.length > 200) {
-      return new Response(JSON.stringify({ success: false }), {
+    if (!password || typeof password !== "string") {
+      return new Response(JSON.stringify({ success: false, error: "Missing password" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -31,13 +31,28 @@ Deno.serve(async (req: Request) => {
       .maybeSingle();
 
     if (error || !data) {
-      return new Response(JSON.stringify({ success: false }), {
+      console.error("DB error or no data:", error);
+      return new Response(JSON.stringify({ success: false, error: "Secret not found" }), {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const ok = await bcrypt.compare(password, data.password_hash);
+    let ok = false;
+    
+    // Check if the stored hash looks like a bcrypt hash (starts with $2)
+    if (data.password_hash.startsWith("$2")) {
+      try {
+        ok = await bcrypt.compare(password, data.password_hash);
+      } catch (err) {
+        console.error("Bcrypt error:", err);
+        ok = false;
+      }
+    } else {
+      // Plain text fallback
+      ok = password.trim() === data.password_hash.trim();
+    }
+
     if (!ok) {
       return new Response(JSON.stringify({ success: false }), {
         status: 200,
@@ -51,7 +66,7 @@ Deno.serve(async (req: Request) => {
     });
   } catch (err) {
     console.error("verify-secret error", err);
-    return new Response(JSON.stringify({ success: false }), {
+    return new Response(JSON.stringify({ success: false, error: "Internal error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
