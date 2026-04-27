@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Candy floss pink palette - all HSL */
+    --background: 350 100% 96%;
+    --foreground: 340 50% 25%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 340 50% 25%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 340 50% 25%;
+
+    /* Primary candy pink #FFD1DC */
+    --primary: 348 100% 91%;
+    --primary-foreground: 340 60% 30%;
+
+    /* Soft pink #FFC0CB */
+    --secondary: 350 100% 88%;
+    --secondary-foreground: 340 60% 30%;
+
+    /* Light pink #FFB6C1 */
+    --accent: 351 100% 86%;
+    --accent-foreground: 340 60% 30%;
+
+    --muted: 350 60% 95%;
+    --muted-foreground: 340 30% 55%;
+
+    --destructive: 0 80% 70%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 350 80% 90%;
+    --input: 350 60% 95%;
+    --ring: 340 80% 75%;
+
+    --radius: 1.5rem;
+
+    /* Custom tokens */
+    --candy-deep: 335 80% 70%;
+    --candy-glow: 340 100% 80%;
+    --bow: 345 90% 75%;
+
+    --gradient-bg: linear-gradient(160deg, hsl(350 100% 96%) 0%, hsl(348 100% 91%) 50%, hsl(351 100% 86%) 100%);
+    --gradient-card: linear-gradient(135deg, hsla(0,0%,100%,0.7) 0%, hsla(350,100%,95%,0.5) 100%);
+    --gradient-button: linear-gradient(135deg, hsl(345 90% 75%) 0%, hsl(335 90% 70%) 100%);
+    --gradient-envelope: linear-gradient(135deg, hsl(348 100% 91%) 0%, hsl(345 90% 75%) 100%);
+
+    --shadow-soft: 0 8px 32px -8px hsla(335, 80%, 70%, 0.3);
+    --shadow-glow: 0 0 40px hsla(340, 100%, 80%, 0.5);
+    --shadow-card: 0 20px 60px -10px hsla(335, 80%, 70%, 0.25);
+    --shadow-button: 0 8px 24px -4px hsla(335, 80%, 70%, 0.5);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html, body, #root {
+    @apply min-h-screen;
+  }
+  body {
+    background: hsl(335 60% 12%);
+    @apply text-foreground antialiased;
+    font-family: 'Quicksand', system-ui, sans-serif;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Fredoka', cursive;
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--gradient-card);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsla(0, 0%, 100%, 0.6);
+    box-shadow: var(--shadow-card);
+  }
+
+  .glow-border {
+    box-shadow: var(--shadow-glow), var(--shadow-card);
+  }
+
+  .candy-button {
+    background: var(--gradient-button);
+    box-shadow: var(--shadow-button);
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .candy-button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 32px -4px hsla(335, 80%, 70%, 0.6), var(--shadow-glow);
+  }
+  .candy-button:active {
+    transform: scale(0.97);
+  }
+
+  .pill-input {
+    @apply rounded-full px-5 py-3 outline-none transition-all duration-300;
+    background: hsla(0, 0%, 100%, 0.7);
+    border: 2px solid hsl(var(--border));
+    backdrop-filter: blur(10px);
+  }
+  .pill-input:focus {
+    border-color: hsl(var(--candy-deep));
+    box-shadow: 0 0 0 4px hsla(340, 100%, 80%, 0.3), 0 0 20px hsla(340, 100%, 80%, 0.4);
+  }
+}
+
+@layer utilities {
+  .text-candy {
+    color: hsl(var(--candy-deep));
+  }
+  .bg-candy {
+    background-color: hsl(var(--candy-deep));
+  }
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Hide scrollbar */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* Floating keyframes */
+@keyframes float-up {
+  0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-10vh) translateX(var(--drift, 30px)) rotate(360deg); opacity: 0; }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px hsla(340, 100%, 80%, 0.4); }
+  50% { box-shadow: 0 0 40px hsla(340, 100%, 80%, 0.8); }
+}
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-10px) rotate(-1deg); }
+  30%, 60%, 90% { transform: translateX(10px) rotate(1deg); }
+}
+.animate-pulse-glow { animation: pulse-glow 2.5s ease-in-out infinite; }
+.animate-gentle-float { animation: gentle-float 4s ease-in-out infinite; }
+.animate-shake { animation: shake 0.5s ease-in-out; }
