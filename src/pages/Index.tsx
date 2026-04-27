@@ -109,7 +109,7 @@ const Index = () => {
         {stage === "form" && (
           <motion.div
             key="form"
-            className="relative z-10 mx-auto w-full max-w-md px-5 pt-10 pb-36"
+            className="relative z-10 mx-auto w-full max-w-md px-5 pt-8 pb-32"
             style={{ willChange: "transform, opacity" }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -165,7 +165,7 @@ const Index = () => {
                     onChange={handleType}
                     placeholder="What do you want to remember?"
                     rows={4}
-                    className="w-full resize-none text-[15px] leading-relaxed outline-none transition-all duration-300 px-4 py-3 min-h-[120px] placeholder:text-pink-900/50"
+                    className="w-full resize-none text-[16px] leading-relaxed outline-none transition-all duration-300 px-4 py-3 min-h-[120px] placeholder:text-pink-900/50"
                     style={{
                       background: "rgba(255, 255, 255, 0.7)",
                       border: "1px solid hsla(335, 80%, 85%, 0.5)",
@@ -195,7 +195,7 @@ const Index = () => {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@email.com"
-                      className="w-full pl-11 pr-4 py-3 text-[14px] font-semibold outline-none transition-all duration-300 placeholder:text-pink-900/50"
+                      className="w-full pl-11 pr-4 py-3.5 text-[16px] font-semibold outline-none transition-all duration-300 placeholder:text-pink-900/50"
                       style={{
                         background: "rgba(255, 255, 255, 0.7)",
                         border: "1px solid hsla(335, 80%, 85%, 0.5)",
@@ -225,7 +225,7 @@ const Index = () => {
                       value={date}
                       min={minDate}
                       onChange={(e) => setDate(e.target.value)}
-                      className="w-full pl-11 pr-4 py-3 text-[14px] font-semibold outline-none transition-all duration-300"
+                      className="w-full pl-11 pr-4 py-3.5 text-[16px] font-semibold outline-none transition-all duration-300"
                       style={{
                         background: "rgba(255, 255, 255, 0.7)",
                         border: "1px solid hsla(335, 80%, 85%, 0.5)",
@@ -255,7 +255,7 @@ const Index = () => {
                           onClick={() => setMood(m.key)}
                           whileHover={{ y: -1 }}
                           whileTap={{ scale: 0.94 }}
-                          className="rounded-2xl py-2.5 px-1 text-center transition-all duration-300 relative shadow-sm"
+                          className="rounded-2xl py-3 px-1 text-center transition-all duration-300 relative shadow-sm"
                           style={{
                             background: active
                               ? "linear-gradient(160deg, hsla(345, 100%, 92%, 0.9) 0%, hsla(340, 90%, 85%, 0.9) 100%)"
@@ -340,7 +340,7 @@ const Index = () => {
           className="fixed bottom-0 left-0 right-0 z-20 px-5 pb-5 pt-6 pointer-events-none"
           style={{
             background:
-              "linear-gradient(to top, hsla(335, 60%, 12%, 0.85) 30%, hsla(335, 60%, 12%, 0))",
+              "linear-gradient(to top, hsla(335, 60%, 12%, 0.9) 20%, hsla(335, 60%, 12%, 0))",
           }}
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

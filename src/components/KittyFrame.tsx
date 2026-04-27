@@ -56,7 +56,7 @@ const Heart = ({ className = "" }: { className?: string }) => (
 const KittyFrame = ({ children }: KittyFrameProps) => {
   return (
     <div
-      className="relative mx-auto w-full max-w-[420px] h-[680px] rounded-[40px] overflow-hidden border-[1px] border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
+      className="relative mx-auto w-full max-w-[420px] h-[680px] max-h-[85vh] md:max-h-none rounded-[40px] overflow-hidden border-[1px] border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.3)]"
       style={{
         background: "linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04))",
         backdropFilter: "blur(30px) saturate(160%)",
@@ -117,7 +117,7 @@ const KittyFrame = ({ children }: KittyFrameProps) => {
 
       {/* 📦 Main content */}
       <motion.div
-        className="absolute top-[15%] bottom-[8%] left-[6%] right-[6%] bg-white/40 backdrop-blur-xl rounded-2xl border-[1px] border-white/50 overflow-hidden flex flex-col shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
+        className="absolute top-[12%] bottom-[6%] left-[4%] right-[4%] bg-white/40 backdrop-blur-xl rounded-2xl border-[1px] border-white/50 overflow-hidden flex flex-col shadow-[inset_0_1px_1px_rgba(255,255,255,0.4)]"
         style={{ willChange: "transform, opacity" }}
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}

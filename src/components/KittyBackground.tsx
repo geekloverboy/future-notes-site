@@ -6,6 +6,7 @@ const KittyBackground = () => {
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 overflow-hidden z-0"
+      style={{ willChange: "transform" }}
     >
       {/* Procedural WebGL Nebula Background */}
       <NebulaBackground />
